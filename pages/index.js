@@ -4,17 +4,45 @@ import Image from 'next/image';
 import buildspaceLogo from '../assets/buildspace-logo.png';
 
 const Home = () => {
-    // Create state property
+    // Create state property for user input
     const [input, setInput] = useState('');
+    // Create state property for image
+    const [img, setImg] = useState('');
 
     // Save changes to input state
     const onChange = (event) => {
         setInput(event.target.value);
     };
 
-    // Add generateAction
+    // generateAction for generate button
     const generateAction = async () => {
         console.log('Generating...');
+
+        // Fetch request
+        const response = await fetch('/api/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'image/jpeg',
+            },
+            body: JSON.stringify({ input }),
+        });
+
+        const data = await response.json();
+
+        // If model still loading, drop that retry time
+        if (response.status === 503) {
+            console.log('Model is loading still :(.')
+            return;
+        }
+
+        // If another error, drop error
+        if (!response.ok) {
+            console.log(`Error: ${data.error}`);
+            return;
+        }
+
+        // Set image data into state property
+        setImg(data.image);
     }
 
   return (
