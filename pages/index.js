@@ -16,6 +16,12 @@ const Home = () => {
     const [retry, setRetry] = useState(0);
     // Number of retries left
     const [retryCount, setRetryCount] = useState(maxRetries);
+    // Generation state tracker
+    const [isGenerating, setIsGenerating] = useState(false);
+    // Prompt tracker
+    const [finalPrompt, setFinalPrompt] = useState('');
+
+
 
     // Save changes to input state
     const onChange = (event) => {
@@ -25,6 +31,11 @@ const Home = () => {
     // generateAction for generate button
     const generateAction = async () => {
         console.log('Generating...');
+
+        // Check to make sure there is no double click
+        if (isGenerating && retry === 0) return;
+        // Set loading has started
+        setIsGenerating(true);
 
         // If this is a retry request, take away retryCount
         if (retry > 0) {
@@ -60,11 +71,18 @@ const Home = () => {
         // If another error, drop error
         if (!response.ok) {
             console.log(`Error: ${data.error}`);
+            setIsGenerating(false);
             return;
         }
 
+        // Set final prompt
+        setFinalPrompt(input);
+        // Remove content from input box
+        setInput('');
         // Set image data into state property
         setImg(data.image);
+        // Everything is all done -- stop loading!
+        setIsGenerating(false);
     }
 
     // Wait before retrying
@@ -105,7 +123,7 @@ const Home = () => {
       <div className="container">
         <div className="header">
           <div className="header-title">
-            <h1>your generator one-liner</h1>
+            <h1>Azuremis (aka Stanito) Generator</h1>
           </div>
           <div className="header-subtitle">
             <h2>Make avatars of Stanito! Make sure to refer to me as "elstanito" in the prompt</h2>
@@ -113,15 +131,39 @@ const Home = () => {
             <div className="prompt-container">
                 <input className="prompt-box" value={input} onChange={onChange}/>
                 <div className="prompt-buttons">
-                    <a className="generate-button" onClick={generateAction}>
+                    {/* Tweak classNames to change classes */}
+                    <a
+                        className={
+                            isGenerating ? 'generate-button loading' : 'generate-button'
+                        }
+                        onClick={generateAction}
+                    >
+                        {/* Tweak to show a loading indicator */}
                         <div className="generate">
-                            <p>Generate</p>
+                            {isGenerating ? (
+                                <span className="loader"></span>
+                            ) : (
+                                <p>Generate</p>
+                            )}
                         </div>
                     </a>
                 </div>
             </div>
-        </div>
-      </div>
+
+            <div className="wrapper">
+
+
+                {/* Add output container */}
+                {img && (
+                    <div className="output-content">
+                        <Image src={img} width={512} height={512} alt={finalPrompt} />
+                        {/* Add prompt here */}
+                        <p>{finalPrompt}</p>
+                    </div>
+                )}
+            </div>
+            </div>
+
       <div className="badge-container grow">
         <a
           href="https://buildspace.so/builds/ai-avatar"
@@ -135,6 +177,7 @@ const Home = () => {
         </a>
       </div>
     </div>
+</div>
   );
 };
 
