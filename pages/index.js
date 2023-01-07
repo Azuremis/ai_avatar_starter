@@ -1,13 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import buildspaceLogo from '../assets/buildspace-logo.png';
 
 const Home = () => {
+    // Max tries is 20 times
+    const maxRetries = 20;
+
     // Create state property for user input
     const [input, setInput] = useState('');
     // Create state property for image
     const [img, setImg] = useState('');
+
+    // Numbers of retries
+    const [retry, setRetry] = useState(0);
+    // Number of retries left
+    const [retryCount, setRetryCount] = useState(maxRetries);
 
     // Save changes to input state
     const onChange = (event) => {
@@ -17,6 +25,19 @@ const Home = () => {
     // generateAction for generate button
     const generateAction = async () => {
         console.log('Generating...');
+
+        // If this is a retry request, take away retryCount
+        if (retry > 0) {
+            setRetryCount((prevState) => {
+                if (prevState === 0) {
+                    return 0;
+                } else {
+                    return prevState - 1;
+                }
+            });
+
+            setRetry(0);
+        }
 
         // Fetch request
         const response = await fetch('/api/generate', {
@@ -31,7 +52,8 @@ const Home = () => {
 
         // If model still loading, drop that retry time
         if (response.status === 503) {
-            console.log('Model is loading still :(.')
+            // Set the estimated_time property in state
+            setRetry(data.estimated_time);
             return;
         }
 
@@ -44,6 +66,36 @@ const Home = () => {
         // Set image data into state property
         setImg(data.image);
     }
+
+    // Wait before retrying
+    const sleep = (ms) => {
+        return new Promise((resolve) => {
+            setTimeout(resolve, ms);
+        });
+    };
+
+    // Trigger retry everytime retry property changes
+    useEffect(() => {
+        const runRetry = async () => {
+            if (retryCount === 0) {
+                console.log(`Model still loading after ${maxRetries} retries. Try request again in 5 minutes.`);
+                setRetryCount(maxRetries);
+                return;
+            }
+
+            console.log(`Trying again in ${retry} seconds.`);
+
+            await sleep(retry * 1000);
+
+            await generateAction();
+        };
+
+        if (retry === 0) {
+            return;
+        }
+
+        runRetry();
+    }, [retry]);
 
   return (
     <div className="root">
