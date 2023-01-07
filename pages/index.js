@@ -6,7 +6,7 @@ const Home = () => {
   return (
     <div className="root">
       <Head>
-        <title>AI Avatar Generator | buildspace</title>
+        <title>El Stanito Avatar Generator</title>
       </Head>
       <div className="container">
         <div className="header">
@@ -14,8 +14,12 @@ const Home = () => {
             <h1>your generator one-liner</h1>
           </div>
           <div className="header-subtitle">
-            <h2>description of your generator</h2>
+            <h2>Make avatars of Stanito! Make sure to refer to me as "elstanito" in the prompt</h2>
           </div>
+            {/* Add prompt container here */}
+            <div className="prompt-container">
+                <input className="prompt-box" />
+            </div>
         </div>
       </div>
       <div className="badge-container grow">
