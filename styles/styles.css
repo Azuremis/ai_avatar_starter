@@ -138,9 +138,8 @@ body {
 }
 
 .generate-button {
-    place-content: center;
-    align-items: center;
-    text-align: center;
+    place-content: flex-start;
+    align-items: flex-start;
     background-color: #d38c16;
     border-radius: 100px;
     display: flex;
@@ -171,11 +170,11 @@ body {
     margin: 0;
 }
 
-.wrapper {
+/*.wrapper {
     display: flex;
-    ustify-content: flex-end;
-    margin-left: 20px; /* This will add a 20px gap to the left of the wrapper */
-}
+    justify-content: flex-end;
+    margin-left: auto; !* This will add a 20px gap to the left of the wrapper *!
+}*/
 
 
 .loading {
@@ -313,8 +312,6 @@ body {
         width: 100%;
     }
 }
-
-
 
 /* Loading ring animation */
 .loader {

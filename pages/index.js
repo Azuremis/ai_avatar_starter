@@ -149,21 +149,15 @@ const Home = () => {
                     </a>
                 </div>
             </div>
-
-            <div className="wrapper">
-
-
-                {/* Add output container */}
-                {img && (
-                    <div className="output-content">
-                        <Image src={img} width={512} height={512} alt={finalPrompt} />
-                        {/* Add prompt here */}
-                        <p>{finalPrompt}</p>
-                    </div>
-                )}
-            </div>
-            </div>
-
+        </div>
+        {/* Add output container */}
+          {img && (
+              <div className="output-content">
+                  <Image src={img} width={512} height={512} alt={finalPrompt} />
+                  {/* Add prompt here */}
+                  <p>{finalPrompt}</p>
+              </div>
+          )}
       <div className="badge-container grow">
         <a
           href="https://buildspace.so/builds/ai-avatar"
